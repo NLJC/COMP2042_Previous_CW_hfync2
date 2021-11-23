@@ -35,10 +35,10 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final String START_TEXT = "Start";
     private static final String MENU_TEXT = "Exit";
 
-    private static final Color BG_COLOR = new Color(0,0,0,0);
+    private static final Color BG_COLOR = new Color(0,0,0, 0);
     private static final Color BORDER_COLOR = new Color(200,8,21); //Venetian Red
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);//school bus yellow
-    private static final Color TEXT_COLOR = new Color(16, 52, 166);//egyptian blue
+    private static final Color TEXT_COLOR = Color.WHITE;//new Color(16, 52, 166);//egyptian blue
     private static final Color CLICKED_BUTTON_COLOR = Color.WHITE;
     private static final Color CLICKED_TEXT = Color.WHITE;
     private static final int BORDER_SIZE = 5;
@@ -109,6 +109,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         painting directly into the HomeMenu rectangle,
         so the translation is made here so the other methods do not do that.
          */
+
         Color prevColor = g2d.getColor();
         Font prevFont = g2d.getFont();
 
@@ -130,6 +131,8 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private void drawContainer(Graphics2D g2d){
         Color prev = g2d.getColor();
 
+        Image backgroundimage = Toolkit.getDefaultToolkit().getImage("Brick wall background.jpg");
+        g2d.drawImage(backgroundimage, 0, 0, this);
         g2d.setColor(BG_COLOR);
         g2d.fill(menuFace);
 

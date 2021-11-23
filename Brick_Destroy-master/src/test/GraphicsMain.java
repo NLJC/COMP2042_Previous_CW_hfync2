@@ -17,27 +17,14 @@
  */
 package test;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class GraphicsMain extends javax.swing.JFrame {
-    Image img = Toolkit.getDefaultToolkit().getImage("Brick wall background.jpg");
-    public GraphicsMain() throws IOException {
-        this.setContentPane(new JPanel() {
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(img, 0, 0, null);
-            }
-        });
-        pack();
-        setVisible(true);
-    }
+
     public static void main(String[] args) throws Exception {
         EventQueue.invokeLater(() -> new GameFrame().initialize());
-        new GraphicsMain();
     }
+
 }
 
 
