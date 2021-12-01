@@ -26,6 +26,9 @@ public class Wall {
 
     private static final int LEVELS_COUNT = 6;
 
+    public int currentscore=0;
+    public int highscore=0;
+
     private static final int CLAY = 1;
     private static final int STEEL = 2;
     private static final int CEMENT = 3;
@@ -189,6 +192,10 @@ public class Wall {
             * because for every brick program checks for horizontal and vertical impacts
             */
             brickCount--;
+            currentscore++;
+            if (currentscore < highscore){
+                highscore = currentscore;
+            }
         }
         else if(impactBorder()) {
             ball.reverseX();

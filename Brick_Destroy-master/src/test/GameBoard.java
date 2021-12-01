@@ -26,6 +26,8 @@ import java.awt.font.FontRenderContext;
 
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
 
+
+
     private static final String CONTINUE = "Continue";
     private static final String RESTART = "Restart";
     private static final String EXIT = "Exit";
@@ -90,7 +92,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
             }
             else if(wall.isDone()){
                 if(wall.hasLevel()){
-                    message = "Go to Next Level";
+                    message = "current score is:" + wall.currentscore + ", high score is:" + wall.highscore;
                     gameTimer.stop();
                     wall.ballReset();
                     wall.wallReset();
