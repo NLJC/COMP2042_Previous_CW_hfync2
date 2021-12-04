@@ -110,7 +110,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
 
-
     private void initialize(){
         this.setPreferredSize(new Dimension(DEF_WIDTH,DEF_HEIGHT));
         this.setFocusable(true);

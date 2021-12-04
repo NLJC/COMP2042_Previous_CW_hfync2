@@ -36,6 +36,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final String EXIT_TEXT = "Exit";
     private static final String INFO_TEXT = "Info";
 
+
     private static final Color BG_COLOR = new Color(0,0,0, 0);
     private static final Color BORDER_COLOR = new Color(200,8,21); //Venetian Red
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);//school bus yellow

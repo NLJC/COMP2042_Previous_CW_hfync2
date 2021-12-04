@@ -33,6 +33,7 @@ public class Wall {
     public int highscore;
     public String higherscore;
 
+
     private static final int CLAY = 1;
     private static final int STEEL = 2;
     private static final int CEMENT = 3;
