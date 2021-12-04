@@ -20,14 +20,19 @@ package test;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.Random;
-
+import java.io.FileWriter;
+import java.io.File;
+import java.util.Scanner;
+import java.io.*;
 
 public class Wall {
 
     private static final int LEVELS_COUNT = 6;
 
     public int currentscore=0;
-    public int highscore=0;
+    public int highscore;
+    public String higherscore;
+
 
     private static final int CLAY = 1;
     private static final int STEEL = 2;
@@ -49,6 +54,19 @@ public class Wall {
     private boolean ballLost;
 
     public Wall(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
+
+        File score = new File("highscorelist.txt");
+
+        try{
+            Scanner scoreScan = new Scanner(score);
+            while (scoreScan.hasNextLine()){
+                higherscore = scoreScan.nextLine();
+                highscore = Integer.parseInt(higherscore);
+            }
+            scoreScan.close();
+        }catch(Exception e){
+
+        }
 
         this.startPoint = new Point(ballPos);
 
@@ -193,8 +211,16 @@ public class Wall {
             */
             brickCount--;
             currentscore++;
-            if (currentscore < highscore){
+            if (currentscore > highscore){
                 highscore = currentscore;
+                higherscore = String.valueOf(highscore);
+                try {
+                    FileWriter writeHighscore = new FileWriter("highscorelist.txt");
+                    writeHighscore.write(higherscore);
+                    writeHighscore.close();
+                }catch (Exception e){
+
+                }
             }
         }
         else if(impactBorder()) {
@@ -281,7 +307,7 @@ public class Wall {
 
     public void nextLevel(){
         bricks = levels[level++];
-        this.brickCount = bricks.length;
+        this.brickCount = 1;
     }
 
     public boolean hasLevel(){
