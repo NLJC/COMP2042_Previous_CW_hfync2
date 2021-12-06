@@ -65,6 +65,8 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         strLen = 0;
         showPauseMenu = false;
 
+        //ImageIcon brickIcon = new ImageIcon("Brick Icon.png");
+
 
 
         menuFont = new Font("Monospaced",Font.PLAIN,TEXT_SIZE);
@@ -73,6 +75,27 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         this.initialize();
         message = "";
         wall = new Wall(new Rectangle(0,0,DEF_WIDTH,DEF_HEIGHT),30,3,6/2,new Point(300,430));
+
+        JLabel highscoreLabel = new JLabel();
+        highscoreLabel.setText("highscore: " + wall.highscore);
+        //highscoreLabel.setVerticalTextPosition(JLabel.BOTTOM);
+        //highscoreLabel.setHorizontalTextPosition(JLabel.LEFT);
+        //highscoreLabel.setSize(150, 20);
+        //highscoreLabel.setVerticalAlignment(JLabel.BOTTOM);
+        //highscoreLabel.setHorizontalAlignment(JLabel.LEFT);
+        //this.add(highscoreLabel);
+
+        JLabel currentscoreLabel = new JLabel();
+        currentscoreLabel.setText("score: " + wall.currentscore);
+        //currentscoreLabel.setVerticalTextPosition(JLabel.BOTTOM);
+        //currentscoreLabel.setHorizontalTextPosition(JLabel.RIGHT);
+        //currentscoreLabel.setSize(150, 20);
+        //highscoreLabel.setVerticalAlignment(JLabel.BOTTOM);
+        //highscoreLabel.setHorizontalAlignment(JLabel.RIGHT);
+        //this.add(currentscoreLabel);
+
+        owner.add(highscoreLabel, BorderLayout.WEST);
+        owner.add(currentscoreLabel, BorderLayout.EAST);
 
         debugConsole = new DebugConsole(owner,wall,this);
         //initialize the first level

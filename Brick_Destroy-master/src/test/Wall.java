@@ -55,6 +55,8 @@ public class Wall {
 
     public Wall(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
 
+
+
         File score = new File("highscorelist.txt");
 
         try{

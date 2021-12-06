@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class InfoBoard{
-        JFrame infoboard = new JFrame();
+        JFrame infoBoard = new JFrame();
 
         //create labels to write down instructions on info page
         JLabel info1 = new JLabel("# Brick_Destroy");
@@ -17,7 +17,6 @@ public class InfoBoard{
         JLabel info8 = new JLabel("ESC enter/exit pause menu");
         JLabel info9 = new JLabel("F1 open console");
         JLabel info10 = new JLabel("the game automatically pause if the frame loses focus");
-
         JLabel info11 = new JLabel("Enjoy ;-)");
 
         InfoBoard(){
@@ -44,22 +43,23 @@ public class InfoBoard{
             info11.setBounds(0, 330, 800, 30);
             info11.setFont(new Font(null, Font.PLAIN, 20));
 
+            infoBoard.add(info1);
+            infoBoard.add(info2);
+            infoBoard.add(info3);
+            infoBoard.add(info4);
+            infoBoard.add(info5);
+            infoBoard.add(info6);
+            infoBoard.add(info7);
+            infoBoard.add(info8);
+            infoBoard.add(info9);
+            infoBoard.add(info10);
+            infoBoard.add(info11);
 
-            infoboard.add(info1);
-            infoboard.add(info2);
-            infoboard.add(info3);
-            infoboard.add(info4);
-            infoboard.add(info5);
-            infoboard.add(info6);
-            infoboard.add(info7);
-            infoboard.add(info8);
-            infoboard.add(info9);
-            infoboard.add(info10);
-            infoboard.add(info11);
 
-            infoboard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            infoboard.setSize(600, 350);
-            infoboard.setLayout(null);
-            infoboard.setVisible(true);
+            //initialize InfoBoard
+            infoBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            infoBoard.setSize(600, 350);
+            infoBoard.setLayout(null);
+            infoBoard.setVisible(true);
         }
 }
