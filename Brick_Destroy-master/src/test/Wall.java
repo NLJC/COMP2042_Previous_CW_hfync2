@@ -309,7 +309,7 @@ public class Wall {
 
     public void nextLevel(){
         bricks = levels[level++];
-        this.brickCount = 1;
+        this.brickCount = bricks.length;
     }
 
     public boolean hasLevel(){
