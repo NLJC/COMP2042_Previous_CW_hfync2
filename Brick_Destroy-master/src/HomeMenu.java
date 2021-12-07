@@ -15,7 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,7 +66,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private boolean infoClicked;
 
 
-    public HomeMenu(GameFrame owner,Dimension area){
+    public HomeMenu(GameFrame owner, Dimension area){
 
         this.setFocusable(true);
         this.requestFocusInWindow();

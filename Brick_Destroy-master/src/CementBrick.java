@@ -1,5 +1,3 @@
-package test;
-
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
