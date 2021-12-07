@@ -58,6 +58,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private DebugConsole debugConsole;
 
 
+    /**
+     * @param owner
+     */
     public GameBoard(JFrame owner){
         super();
 
@@ -111,6 +114,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
 
+    /**
+     *
+     */
     private void initialize(){
         this.setPreferredSize(new Dimension(DEF_WIDTH,DEF_HEIGHT));
         this.setFocusable(true);
@@ -121,6 +127,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
 
+    /**
+     * @param g
+     */
     public void paint(Graphics g){
 
         Graphics2D g2d = (Graphics2D) g;

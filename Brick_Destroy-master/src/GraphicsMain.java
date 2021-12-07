@@ -20,6 +20,10 @@ import java.awt.*;
 
 public class GraphicsMain extends javax.swing.JFrame {
 
+    /**
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         EventQueue.invokeLater(() -> new GameFrame().initialize());
     }

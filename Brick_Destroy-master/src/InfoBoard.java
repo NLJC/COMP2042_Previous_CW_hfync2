@@ -17,6 +17,9 @@ public class InfoBoard{
         JLabel info10 = new JLabel("the game automatically pause if the frame loses focus");
         JLabel info11 = new JLabel("Enjoy ;-)");
 
+    /**
+     *
+     */
         InfoBoard(){
             info1.setBounds(0, 0, 800, 30);
             info1.setFont(new Font(null, Font.PLAIN, 20));

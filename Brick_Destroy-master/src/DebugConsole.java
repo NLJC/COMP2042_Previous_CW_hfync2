@@ -32,6 +32,11 @@ public class DebugConsole extends JDialog implements WindowListener{
     private Wall wall;
 
 
+    /**
+     * @param owner
+     * @param wall
+     * @param gameBoard
+     */
     public DebugConsole(JFrame owner,Wall wall,GameBoard gameBoard){
 
         this.wall = wall;
@@ -46,6 +51,9 @@ public class DebugConsole extends JDialog implements WindowListener{
         this.pack();
     }
 
+    /**
+     *
+     */
     private void initialize(){
         this.setModal(true);
         this.setTitle(TITLE);
@@ -56,6 +64,9 @@ public class DebugConsole extends JDialog implements WindowListener{
     }
 
 
+    /**
+     *
+     */
     private void setLocation(){
         int x = ((owner.getWidth() - this.getWidth()) / 2) + owner.getX();
         int y = ((owner.getHeight() - this.getHeight()) / 2) + owner.getY();
@@ -63,31 +74,49 @@ public class DebugConsole extends JDialog implements WindowListener{
     }
 
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowOpened(WindowEvent windowEvent) {
 
     }
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowClosing(WindowEvent windowEvent) {
         gameBoard.repaint();
     }
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowClosed(WindowEvent windowEvent) {
 
     }
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowIconified(WindowEvent windowEvent) {
 
     }
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowDeiconified(WindowEvent windowEvent) {
 
     }
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowActivated(WindowEvent windowEvent) {
         setLocation();
@@ -95,6 +124,9 @@ public class DebugConsole extends JDialog implements WindowListener{
         debugPanel.setValues(b.getSpeedX(),b.getSpeedY());
     }
 
+    /**
+     * @param windowEvent
+     */
     @Override
     public void windowDeactivated(WindowEvent windowEvent) {
 
