@@ -20,11 +20,19 @@ package test;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.Random;
-
+import java.io.FileWriter;
+import java.io.File;
+import java.util.Scanner;
+import java.io.*;
 
 public class Wall {
 
-    private static final int LEVELS_COUNT = 4;
+    private static final int LEVELS_COUNT = 6;
+
+    public int currentscore=0;
+    public int highscore;
+    public String higherscore;
+
 
     private static final int CLAY = 1;
     private static final int STEEL = 2;
@@ -46,6 +54,21 @@ public class Wall {
     private boolean ballLost;
 
     public Wall(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
+
+
+
+        File score = new File("highscorelist.txt");
+
+        try{
+            Scanner scoreScan = new Scanner(score);
+            while (scoreScan.hasNextLine()){
+                higherscore = scoreScan.nextLine();
+                highscore = Integer.parseInt(higherscore);
+            }
+            scoreScan.close();
+        }catch(Exception e){
+
+        }
 
         this.startPoint = new Point(ballPos);
 
@@ -170,6 +193,8 @@ public class Wall {
         tmp[1] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,CEMENT);
         tmp[2] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,STEEL);
         tmp[3] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,CEMENT);
+        tmp[4] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,STEEL);
+        tmp[5] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CEMENT,CEMENT);
         return tmp;
     }
 
@@ -187,6 +212,18 @@ public class Wall {
             * because for every brick program checks for horizontal and vertical impacts
             */
             brickCount--;
+            currentscore++;
+            if (currentscore > highscore){
+                highscore = currentscore;
+                higherscore = String.valueOf(highscore);
+                try {
+                    FileWriter writeHighscore = new FileWriter("highscorelist.txt");
+                    writeHighscore.write(higherscore);
+                    writeHighscore.close();
+                }catch (Exception e){
+
+                }
+            }
         }
         else if(impactBorder()) {
             ball.reverseX();
