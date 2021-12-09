@@ -27,7 +27,7 @@ public class Player {
 
     private static final int DEF_MOVE_AMOUNT = 5;
 
-    private Rectangle playerFace;
+    private Rectangle playerShape;
     private Point playerlocation;
     private int moveAmount;
     private int min;
@@ -39,11 +39,12 @@ public class Player {
      * @param width
      * @param height
      * @param container
+     * create player's paddle
      */
     public Player(Point playerlocation,int width,int height,Rectangle container) {
         this.playerlocation = playerlocation;
         moveAmount = 0;
-        playerFace = makeRectangle(width, height);
+        playerShape = makePaddle(width, height);
         min = container.x + (width / 2);
         max = min + container.width - width;
 
@@ -53,8 +54,9 @@ public class Player {
      * @param width
      * @param height
      * @return
+     * draw player's paddle
      */
-    private Rectangle makeRectangle(int width,int height){
+    private Rectangle makePaddle(int width,int height){
         Point p = new Point((int)(playerlocation.getX() - (width / 2)),(int)playerlocation.getY());
         return  new Rectangle(p,new Dimension(width,height));
     }
@@ -62,38 +64,39 @@ public class Player {
     /**
      * @param b
      * @return
+     * check if player paddle will impact ball, and return true if so
      */
-    public boolean impact(Ball b){
-        return playerFace.contains(b.getPosition()) && playerFace.contains(b.down);
+    public boolean checkImpact(Ball b){
+        return playerShape.contains(b.getPosition()) && playerShape.contains(b.down);
     }
 
     /**
-     *
+     * moves player in the direction of moveAmount
      */
-    public void move(){
+    public void movePlayer(){
         double x = playerlocation.getX() + moveAmount;
         if(x < min || x > max)
             return;
         playerlocation.setLocation(x,playerlocation.getY());
-        playerFace.setLocation(playerlocation.x - (int)playerFace.getWidth()/2,playerlocation.y);
+        playerShape.setLocation(playerlocation.x - (int)playerShape.getWidth()/2,playerlocation.y);
     }
 
     /**
-     *
+     * changes moveAmount to -5
      */
     public void moveLeft(){
         moveAmount = -DEF_MOVE_AMOUNT;
     }
 
     /**
-     *
+     * changes moveAmount to 5
      */
     public void movRight(){
         moveAmount = DEF_MOVE_AMOUNT;
     }
 
     /**
-     *
+     * changes moveAmount to 0
      */
     public void stop(){
         moveAmount = 0;
@@ -101,16 +104,18 @@ public class Player {
 
     /**
      * @return
+     * return player shape
      */
-    public Shape getPlayerFace(){
-        return  playerFace;
+    public Shape getPlayerShape(){
+        return  playerShape;
     }
 
     /**
      * @param p
+     * move player to a specified position
      */
     public void moveToPoint(Point p){
         playerlocation.setLocation(p);
-        playerFace.setLocation(playerlocation.x - (int)playerFace.getWidth()/2,playerlocation.y);
+        playerShape.setLocation(playerlocation.x - (int)playerShape.getWidth()/2,playerlocation.y);
     }
 }

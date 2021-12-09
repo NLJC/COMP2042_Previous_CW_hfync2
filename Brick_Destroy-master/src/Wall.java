@@ -235,7 +235,7 @@ public class Wall {
      *
      */
     public void move(){
-        player.move();
+        player.movePlayer();
         ball.ballMovement();
     }
 
@@ -243,7 +243,7 @@ public class Wall {
      *
      */
     public void findImpacts(){
-        if(player.impact(ball)){
+        if(player.checkImpact(ball)){
             ball.reverseY();
         }
         else if(impactWall()){

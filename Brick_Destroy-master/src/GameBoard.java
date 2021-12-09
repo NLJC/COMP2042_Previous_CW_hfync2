@@ -190,7 +190,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private void drawPlayer(Player p, Graphics2D g2d){
         Color tmp = g2d.getColor();
 
-        Shape s = p.getPlayerFace();
+        Shape s = p.getPlayerShape();
         g2d.setColor(Player.INNER_COLOR);
         g2d.fill(s);
 
