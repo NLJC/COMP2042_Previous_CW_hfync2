@@ -285,18 +285,18 @@ public class Wall {
                 //Vertical Impact
                 case Brick.UP_IMPACT:
                     ball.reverseY();
-                    return b.setImpact(ball.down, Brick.Crack.UP);
+                    return b.checkImpact(ball.down, Brick.Crack.UP);
                 case Brick.DOWN_IMPACT:
                     ball.reverseY();
-                    return b.setImpact(ball.up, Brick.Crack.DOWN);
+                    return b.checkImpact(ball.up, Brick.Crack.DOWN);
 
                 //Horizontal Impact
                 case Brick.LEFT_IMPACT:
                     ball.reverseX();
-                    return b.setImpact(ball.right, Brick.Crack.RIGHT);
+                    return b.checkImpact(ball.right, Brick.Crack.RIGHT);
                 case Brick.RIGHT_IMPACT:
                     ball.reverseX();
-                    return b.setImpact(ball.left, Brick.Crack.LEFT);
+                    return b.checkImpact(ball.left, Brick.Crack.LEFT);
             }
         }
         return false;
@@ -355,7 +355,7 @@ public class Wall {
      */
     public void wallReset(){
         for(Brick b : bricks)
-            b.repair();
+            b.repairBrick();
         brickCount = bricks.length;
         ballCount = 3;
     }

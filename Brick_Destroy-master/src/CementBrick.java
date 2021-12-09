@@ -12,36 +12,39 @@ public class CementBrick extends Brick {
     private static final int CEMENT_STRENGTH = 2;
 
     private Crack crack;
-    private Shape brickFace;
+    private Shape brickShape;
 
 
     /**
      * @param point
      * @param size
+     * create initial brick "Cement Brick" with same brick shape
      */
     public CementBrick(Point point, Dimension size){
         super(NAME,point,size,DEF_BORDER,DEF_INNER,CEMENT_STRENGTH);
         crack = new Crack(DEF_CRACK_DEPTH,DEF_STEPS);
-        brickFace = super.brickFace;
+        brickShape = super.brickShape;
     }
 
     /**
      * @param pos
-     * @param size
+     * @param shape
      * @return
+     * returns brick shape and position
      */
     @Override
-    protected Shape makeBrickFace(Point pos, Dimension size) {
-        return new Rectangle(pos,size);
+    protected Shape makeBrickShape(Point pos, Dimension shape) {
+        return new Rectangle(pos,shape);
     }
 
     /**
      * @param point
      * @param dir
      * @return
+     * checks if brick is broken, then runs it through impact class if false, then makes crack if brick not broken
      */
     @Override
-    public boolean setImpact(Point2D point, int dir) {
+    public boolean checkImpact(Point2D point, int dir) {
         if(super.isBroken())
             return false;
         super.impact();
@@ -56,29 +59,30 @@ public class CementBrick extends Brick {
 
     /**
      * @return
+     * get brick shape
      */
     @Override
     public Shape getBrick() {
-        return brickFace;
+        return brickShape;
     }
 
     /**
-     *
+     *update brick with cracked brick shape
      */
     private void updateBrick(){
         if(!super.isBroken()){
             GeneralPath gp = crack.draw();
-            gp.append(super.brickFace,false);
-            brickFace = gp;
+            gp.append(super.brickShape,false);
+            brickShape = gp;
         }
     }
 
     /**
-     *
+     *resets brick to its original shape
      */
-    public void repair(){
-        super.repair();
+    public void repairBrick(){
+        super.repairBrick();
         crack.reset();
-        brickFace = super.brickFace;
+        brickShape = super.brickShape;
     }
 }

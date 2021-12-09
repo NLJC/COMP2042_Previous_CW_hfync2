@@ -29,6 +29,7 @@ public abstract class Ball {
      * @param ballYLength
      * @param innerColor
      * @param borderColor
+     * declare up, down, left, right, create ball shape and ball colors
      */
     public Ball(Point2D ballCoordinates,int ballXLength,int ballYLength,Color innerColor,Color borderColor){
         this.ballCoordinates = ballCoordinates;
@@ -48,11 +49,12 @@ public abstract class Ball {
      * @param ballXLength
      * @param ballYLength
      * @return
+     * create abstract class
      */
     protected abstract Shape makeBall(Point2D ballCoordinates,int ballXLength,int ballYLength);
 
     /**
-     *
+     *move the ball in the direction of its speed
      */
     public void ballMovement(){
         RectangularShape tmp = (RectangularShape) ballShape;
@@ -78,6 +80,7 @@ public abstract class Ball {
 
     /**
      * @param p
+     * moves the ball to a specified coordinate in game
      */
     public void moveToPoint(Point p){
         ballCoordinates.setLocation(p);
@@ -90,49 +93,8 @@ public abstract class Ball {
     }
 
     /**
-     *
-     */
-    public void reverseX(){
-        speedX *= -1;
-    }
-
-    /**
-     *
-     */
-    public void reverseY(){
-        speedY *= -1;
-    }
-
-    /**
      * @return
-     */
-    public Color getBorderColor(){
-        return borderColor;
-    }
-
-    /**
-     * @return
-     */
-    public Color getInnerColor(){
-        return innerColor;
-    }
-
-    /**
-     * @return
-     */
-    public Point2D getPosition(){
-        return ballCoordinates;
-    }
-
-    /**
-     * @return
-     */
-    public Shape getBallShape(){
-        return ballShape;
-    }
-
-    /**
-     * @return
+     * get x speed of ball
      */
     public int getSpeedX(){
         return speedX;
@@ -140,10 +102,55 @@ public abstract class Ball {
 
     /**
      * @return
+     * get y speed of ball
      */
     public int getSpeedY(){
         return speedY;
     }
 
+    /**
+     * reverse the direction of x speed
+     */
+    public void reverseX(){
+        speedX *= -1;
+    }
 
+    /**
+     * reverse the direcction of y speed
+     */
+    public void reverseY(){
+        speedY *= -1;
+    }
+
+    /**
+     * @return
+     * get color of ball's border
+     */
+    public Color getBorderColor(){
+        return borderColor;
+    }
+
+    /**
+     * @return
+     * get color of ball
+     */
+    public Color getInnerColor(){
+        return innerColor;
+    }
+
+    /**
+     * @return
+     * get position of ball
+     */
+    public Point2D getPosition(){
+        return ballCoordinates;
+    }
+
+    /**
+     * @return
+     * get shape of ball
+     */
+    public Shape getBallShape(){
+        return ballShape;
+    }
 }

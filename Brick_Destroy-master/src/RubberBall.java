@@ -30,6 +30,7 @@ public class RubberBall extends Ball {
 
     /**
      * @param ballCoordinates
+     * create rubber ball with Ball's Ball class
      */
     public RubberBall(Point2D ballCoordinates){
         super(ballCoordinates,DEF_RADIUS,DEF_RADIUS,DEF_INNER_COLOR,DEF_BORDER_COLOR);
@@ -41,6 +42,7 @@ public class RubberBall extends Ball {
      * @param ballXLength
      * @param ballYLength
      * @return
+     * draw ball with co-ordinates and x and y radius
      */
     @Override
     protected Shape makeBall(Point2D ballCoordinates, int ballXLength, int ballYLength) {
