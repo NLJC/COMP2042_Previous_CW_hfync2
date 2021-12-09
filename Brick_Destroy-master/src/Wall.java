@@ -94,7 +94,8 @@ public class Wall {
             speedY = -rnd.nextInt(3);
         }while(speedY == 0);
 
-        ball.setSpeed(speedX,speedY);
+        setBallXSpeed(speedX);
+        setBallYSpeed(speedY);
 
         player = new Player((Point) ballPos.clone(),150,10, drawArea);
 
@@ -235,7 +236,7 @@ public class Wall {
      */
     public void move(){
         player.move();
-        ball.move();
+        ball.ballMovement();
     }
 
     /**
@@ -334,8 +335,8 @@ public class Wall {
      *
      */
     public void ballReset(){
-        player.moveTo(startPoint);
-        ball.moveTo(startPoint);
+        player.moveToPoint(startPoint);
+        ball.moveToPoint(startPoint);
         int speedX,speedY;
         do{
             speedX = rnd.nextInt(5) - 2;
@@ -344,7 +345,8 @@ public class Wall {
             speedY = -rnd.nextInt(3);
         }while(speedY == 0);
 
-        ball.setSpeed(speedX,speedY);
+        setBallXSpeed(speedX);
+        setBallYSpeed(speedY);
         ballLost = false;
     }
 
@@ -391,14 +393,14 @@ public class Wall {
      * @param s
      */
     public void setBallXSpeed(int s){
-        ball.setXSpeed(s);
+        ball.speedX = s;
     }
 
     /**
      * @param s
      */
     public void setBallYSpeed(int s){
-        ball.setYSpeed(s);
+        ball.speedY = s;
     }
 
     /**

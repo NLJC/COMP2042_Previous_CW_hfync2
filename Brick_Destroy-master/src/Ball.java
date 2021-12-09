@@ -6,97 +6,87 @@ import java.awt.geom.RectangularShape;
  * Created by filippo on 04/09/16.
  *
  */
-abstract public class Ball {
+public abstract class Ball {
 
-    private Shape ballFace;
+    private Shape ballShape;
 
-    private Point2D center;
+    private Point2D ballCoordinates;
 
     Point2D up;
     Point2D down;
     Point2D left;
     Point2D right;
 
-    private Color border;
-    private Color inner;
+    private Color borderColor;
+    private Color innerColor;
 
-    private int speedX;
-    private int speedY;
+    public int speedX;
+    public int speedY;
 
     /**
-     * @param center
-     * @param radiusA
-     * @param radiusB
-     * @param inner
-     * @param border
+     * @param ballCoordinates
+     * @param ballXLength
+     * @param ballYLength
+     * @param innerColor
+     * @param borderColor
      */
-    public Ball(Point2D center,int radiusA,int radiusB,Color inner,Color border){
-        this.center = center;
+    public Ball(Point2D ballCoordinates,int ballXLength,int ballYLength,Color innerColor,Color borderColor){
+        this.ballCoordinates = ballCoordinates;
 
         up = new Point2D.Double();
         down = new Point2D.Double();
         left = new Point2D.Double();
         right = new Point2D.Double();
 
-        up.setLocation(center.getX(),center.getY()-(radiusB / 2));
-        down.setLocation(center.getX(),center.getY()+(radiusB / 2));
-
-        left.setLocation(center.getX()-(radiusA /2),center.getY());
-        right.setLocation(center.getX()+(radiusA /2),center.getY());
-
-
-        ballFace = makeBall(center,radiusA,radiusB);
-        this.border = border;
-        this.inner  = inner;
-        speedX = 0;
-        speedY = 0;
+        ballShape = makeBall(ballCoordinates,ballXLength,ballYLength);
+        this.borderColor = borderColor;
+        this.innerColor  = innerColor;
     }
 
     /**
-     * @param center
-     * @param radiusA
-     * @param radiusB
+     * @param ballCoordinates
+     * @param ballXLength
+     * @param ballYLength
      * @return
      */
-    protected abstract Shape makeBall(Point2D center,int radiusA,int radiusB);
+    protected abstract Shape makeBall(Point2D ballCoordinates,int ballXLength,int ballYLength);
 
     /**
      *
      */
-    public void move(){
-        RectangularShape tmp = (RectangularShape) ballFace;
-        center.setLocation((center.getX() + speedX),(center.getY() + speedY));
+    public void ballMovement(){
+        RectangularShape tmp = (RectangularShape) ballShape;
+        ballCoordinates.setLocation((ballCoordinates.getX() + speedX),(ballCoordinates.getY() + speedY));
         double w = tmp.getWidth();
         double h = tmp.getHeight();
 
-        tmp.setFrame((center.getX() -(w / 2)),(center.getY() - (h / 2)),w,h);
-        setPoints(w,h);
-
-
-        ballFace = tmp;
+        tmp.setFrame((ballCoordinates.getX() -(w / 2)),(ballCoordinates.getY() - (h / 2)),w,h);
+        checkBallMovement(w,h);
     }
 
     /**
-     * @param x
-     * @param y
+     * @param width
+     * @param height
+     * tells where the ball will move next frame
      */
-    public void setSpeed(int x,int y){
-        speedX = x;
-        speedY = y;
+    private void checkBallMovement(double width,double height){
+        up.setLocation(ballCoordinates.getX(),ballCoordinates.getY()-(height / 2));
+        down.setLocation(ballCoordinates.getX(),ballCoordinates.getY()+(height / 2));
+        left.setLocation(ballCoordinates.getX()-(width / 2),ballCoordinates.getY());
+        right.setLocation(ballCoordinates.getX()+(width / 2),ballCoordinates.getY());
     }
 
     /**
-     * @param s
+     * @param p
      */
-    public void setXSpeed(int s){
-        speedX = s;
-    }
+    public void moveToPoint(Point p){
+        ballCoordinates.setLocation(p);
 
-    /**
-     * @param s
-     */
-    public void setYSpeed(int s){
-        speedY = s;
+        RectangularShape tmp = (RectangularShape) ballShape;
+        double w = tmp.getWidth();
+        double h = tmp.getHeight();
+
+        tmp.setFrame((ballCoordinates.getX() -(w / 2)),(ballCoordinates.getY() - (h / 2)),w,h);
     }
 
     /**
@@ -117,54 +107,28 @@ abstract public class Ball {
      * @return
      */
     public Color getBorderColor(){
-        return border;
+        return borderColor;
     }
 
     /**
      * @return
      */
     public Color getInnerColor(){
-        return inner;
+        return innerColor;
     }
 
     /**
      * @return
      */
     public Point2D getPosition(){
-        return center;
+        return ballCoordinates;
     }
 
     /**
      * @return
      */
-    public Shape getBallFace(){
-        return ballFace;
-    }
-
-    /**
-     * @param p
-     */
-    public void moveTo(Point p){
-        center.setLocation(p);
-
-        RectangularShape tmp = (RectangularShape) ballFace;
-        double w = tmp.getWidth();
-        double h = tmp.getHeight();
-
-        tmp.setFrame((center.getX() -(w / 2)),(center.getY() - (h / 2)),w,h);
-        ballFace = tmp;
-    }
-
-    /**
-     * @param width
-     * @param height
-     */
-    private void setPoints(double width,double height){
-        up.setLocation(center.getX(),center.getY()-(height / 2));
-        down.setLocation(center.getX(),center.getY()+(height / 2));
-
-        left.setLocation(center.getX()-(width / 2),center.getY());
-        right.setLocation(center.getX()+(width / 2),center.getY());
+    public Shape getBallShape(){
+        return ballShape;
     }
 
     /**

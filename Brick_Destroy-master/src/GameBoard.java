@@ -85,7 +85,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         gameTimer = new Timer(10,e ->{
             wall.move();
             wall.findImpacts();
-            message = String.format("Bricks: %d Balls %d",wall.getBrickCount(),wall.getBallCount());
+            message = String.format("Bricks: %d %n Balls %d",wall.getBrickCount(),wall.getBallCount());
             if(wall.isBallLost()){
                 if(wall.ballEnd()){
                     wall.wallReset();
@@ -176,7 +176,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private void drawBall(Ball ball, Graphics2D g2d){
         Color tmp = g2d.getColor();
 
-        Shape s = ball.getBallFace();
+        Shape s = ball.getBallShape();
 
         g2d.setColor(ball.getInnerColor());
         g2d.fill(s);
