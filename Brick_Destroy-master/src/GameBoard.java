@@ -16,366 +16,438 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.FontRenderContext;
+import java.awt.geom.Point2D;
+import java.util.Random;
+import java.io.FileWriter;
+import java.io.File;
+import java.util.Scanner;
 
+public class GameBoard {
 
+    private static final int LEVELS_COUNT = 6;
 
-public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
+    public int currentscore=0;
+    public int highscore;
+    public String higherscore;
 
+    private static final int CLAY = 1;
+    private static final int STEEL = 2;
+    private static final int CEMENT = 3;
 
+    private Random rnd;
+    private Rectangle area;
 
-    private static final String CONTINUE = "Continue";
-    private static final String RESTART = "Restart";
-    private static final String EXIT = "Exit";
-    private static final String PAUSE = "Pause Menu";
-    private static final int TEXT_SIZE = 30;
-    private static final Color MENU_COLOR = new Color(0,255,0);
+    Brick[] bricks;
+    Ball ball;
+    Player player;
 
+    private Brick[][] levels;
+    private int level;
 
-    private static final int DEF_WIDTH = 600;
-    private static final int DEF_HEIGHT = 450;
-
-    private static final Color BG_COLOR = Color.WHITE;
-
-    private Timer gameTimer;
-
-    private Wall wall;
-
-    private String message;
-
-    private boolean showPauseMenu;
-
-    private Font menuFont;
-
-    private Rectangle continueButtonRect;
-    private Rectangle exitButtonRect;
-    private Rectangle restartButtonRect;
-    private int strLen;
-
-    private DebugConsole debugConsole;
-
+    private Point startPoint;
+    private int brickCount;
+    private int ballCount;
+    private boolean ballLost;
 
     /**
-     * @param owner
+     * @param drawArea
+     * @param brickCount
+     * @param lineCount
+     * @param brickDimensionRatio
+     * @param ballPos
+     * create ball and player in their initial positions, and set random ball speed
      */
-    public GameBoard(JFrame owner){
-        super();
+    public GameBoard(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
+        this.startPoint = new Point(ballPos);
+        rnd = new Random();
 
-        strLen = 0;
-        showPauseMenu = false;
+        levels = makeLevels(drawArea,brickCount,lineCount,brickDimensionRatio);
+        level = 0;
 
-        //ImageIcon brickIcon = new ImageIcon("Brick Icon.png");
+        ballCount = 3;
+        ballLost = false;
 
+        //create ball in starting position
+        makeBall(ballPos);
 
+        //set ball speed to random speed when ball has no speed
+        int speedX=0;
+        int speedY=0;
+        do{
+            speedX = rnd.nextInt(5) - 2;
+        }while(speedX == 0);
+        do{
+            speedY = -rnd.nextInt(3);
+        }while(speedY == 0);
 
-        menuFont = new Font("Monospaced",Font.PLAIN,TEXT_SIZE);
+        setBallXSpeed(speedX);
+        setBallYSpeed(speedY);
 
+        //clone ball position and put player there
+        player = new Player((Point) ballPos.clone(),150,10, drawArea);
 
-        this.initialize();
-        message = "";
-        wall = new Wall(new Rectangle(0,0,DEF_WIDTH,DEF_HEIGHT),30,3,6/2,new Point(300,430));
+        area = drawArea;
+    }
 
-        debugConsole = new DebugConsole(owner,wall,this);
-        //initialize the first level
-        wall.nextLevel();
+    /**
+     * @param drawArea
+     * @param brickCount
+     * @param lineCount
+     * @param brickSizeRatio
+     * @param type
+     * @return
+     * generates the level's bricks and places them down when there is only 1 type of brick
+     */
+    private Brick[] makeSingleTypeLevel(Rectangle drawArea, int brickCount, int lineCount, double brickSizeRatio, int type){
+        /*
+          if brickCount is not divisible by line count,brickCount is adjusted to the biggest
+          multiple of lineCount smaller then brickCount
+         */
+        brickCount -= brickCount % lineCount;
 
-        gameTimer = new Timer(10,e ->{
-            wall.move();
-            wall.findImpacts();
-            message = String.format("Bricks: %d %n Balls %d",wall.getBrickCount(),wall.getBallCount());
-            if(wall.isBallLost()){
-                if(wall.ballEnd()){
-                    wall.wallReset();
-                    message = "Game over";
+        int brickOnLine = brickCount / lineCount;
+
+        double brickLength = drawArea.getWidth() / brickOnLine;
+        double brickHeight = brickLength / brickSizeRatio;
+
+        brickCount += lineCount / 2;
+
+        Brick[] tmp  = new Brick[brickCount];
+
+        Dimension brickSize = new Dimension((int) brickLength,(int) brickHeight);
+        Point p = new Point();
+
+        int i;
+        for(i = 0; i < tmp.length; i++){
+            int line = i / brickOnLine;
+            if(line == lineCount)
+                break;
+            double x = (i % brickOnLine) * brickLength;
+            x =(line % 2 == 0) ? x : (x - (brickLength / 2));
+            double y = (line) * brickHeight;
+            p.setLocation(x,y);
+            tmp[i] = makeBrick(p,brickSize,type);
+        }
+
+        for(double y = brickHeight;i < tmp.length;i++, y += 2*brickHeight){
+            double x = (brickOnLine * brickLength) - (brickLength / 2);
+            p.setLocation(x,y);
+            tmp[i] = new ClayBrick(p,brickSize);
+        }
+        return tmp;
+    }
+
+    /**
+     * @param drawArea
+     * @param brickCount
+     * @param lineCount
+     * @param brickSizeRatio
+     * @param typeA
+     * @param typeB
+     * @return
+     * generates the level's bricks and places them down when there are 2 types of bricks
+     */
+    private Brick[] makeChessboardLevel(Rectangle drawArea, int brickCount, int lineCount, double brickSizeRatio, int typeA, int typeB){
+        /*
+          if brickCount is not divisible by line count,brickCount is adjusted to the biggest
+          multiple of lineCount smaller then brickCount
+         */
+        brickCount -= brickCount % lineCount;
+
+        int brickOnLine = brickCount / lineCount;
+
+        int centerLeft = brickOnLine / 2 - 1;
+        int centerRight = brickOnLine / 2 + 1;
+
+        double brickLength = drawArea.getWidth() / brickOnLine;
+        double brickHeight = brickLength / brickSizeRatio;
+
+        brickCount += lineCount / 2;
+
+        Brick[] tmp  = new Brick[brickCount];
+
+        Dimension brickSize = new Dimension((int) brickLength,(int) brickHeight);
+        Point p = new Point();
+
+        int i;
+        for(i = 0; i < tmp.length; i++){
+            int line = i / brickOnLine;
+            if(line == lineCount)
+                break;
+            int posX = i % brickOnLine;
+            double x = posX * brickLength;
+            x =(line % 2 == 0) ? x : (x - (brickLength / 2));
+            double y = (line) * brickHeight;
+            p.setLocation(x,y);
+
+            boolean b = ((line % 2 == 0 && i % 2 == 0) || (line % 2 != 0 && posX > centerLeft && posX <= centerRight));
+            tmp[i] = b ?  makeBrick(p,brickSize,typeA) : makeBrick(p,brickSize,typeB);
+        }
+
+        for(double y = brickHeight;i < tmp.length;i++, y += 2*brickHeight){
+            double x = (brickOnLine * brickLength) - (brickLength / 2);
+            p.setLocation(x,y);
+            tmp[i] = makeBrick(p,brickSize,typeA);
+        }
+        return tmp;
+    }
+
+    /**
+     * @param ballPos
+     * creates the ball at starting position
+     */
+    private void makeBall(Point2D ballPos){
+        ball = new RubberBall(ballPos);
+    }
+
+    /**
+     * @param drawArea
+     * @param brickCount
+     * @param lineCount
+     * @param brickDimensionRatio
+     * @return
+     * generates the levels, also decides what kind of bricks to use each level
+     */
+    private Brick[][] makeLevels(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio){
+        Brick[][] tmp = new Brick[LEVELS_COUNT][];
+        tmp[0] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY);
+        tmp[1] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,STEEL);
+        tmp[2] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL);
+        tmp[3] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,CEMENT);
+        tmp[4] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CEMENT);
+        tmp[5] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,CEMENT);
+        return tmp;
+    }
+
+    /**
+     * calls the methods that move the player and move the ball
+     */
+    public void move(){
+        player.movePlayer();
+        ball.ballMovement();
+    }
+
+    /**
+     * if paddle and ball are about to collide, reverse the y speed of ball
+     * if ball is about to collide with a brick, reverse either its x or y speed depending on where it collides
+     */
+    public void findImpacts(){
+        if(player.checkImpact(ball)){
+            ball.reverseY();
+        }
+        else if(impactBrickWall()){
+            /*for efficiency reverse is done into method impactWall
+            * because for every brick program checks for horizontal and vertical impacts
+            */
+            brickCount--;
+            currentscore++;
+            if (currentscore > highscore){
+                highscore = currentscore;
+                higherscore = String.valueOf(highscore);
+                try {
+                    FileWriter writeHighscore = new FileWriter("highscorelist.txt");
+                    writeHighscore.write(higherscore);
+                    writeHighscore.close();
+                }catch (Exception e){
+
                 }
-                wall.ballReset();
-                gameTimer.stop();
             }
-            else if(wall.isDone()){
-                if(wall.hasLevel()){
-                    message = "current score is:" + wall.currentscore + ", high score is:" + wall.highscore;
-                    gameTimer.stop();
-                    wall.ballReset();
-                    wall.wallReset();
-                    wall.nextLevel();
-                }
-                else{
-                    message = "ALL WALLS DESTROYED";
-                    gameTimer.stop();
-                }
+        }
+        else if(impactBorder()) {
+            ball.reverseX();
+        }
+        else if(ball.getPosition().getY() < area.getY()){
+            ball.reverseY();
+        }
+        else if(ball.getPosition().getY() > area.getY() + area.getHeight()){
+            ballCount--;
+            ballLost = true;
+        }
+    }
+
+    /**
+     * @return
+     * changes the ball's direction if it collides with a brick, change depends on where it collides with
+     */
+    private boolean impactBrickWall(){
+        for(Brick b : bricks){
+            switch(b.findImpact(ball)) {
+                //Vertical Impact
+                case Brick.UP_IMPACT:
+                    ball.reverseY();
+                    return b.checkImpact(ball.down, Brick.Crack.UP);
+                case Brick.DOWN_IMPACT:
+                    ball.reverseY();
+                    return b.checkImpact(ball.up, Brick.Crack.DOWN);
+
+                //Horizontal Impact
+                case Brick.LEFT_IMPACT:
+                    ball.reverseX();
+                    return b.checkImpact(ball.right, Brick.Crack.RIGHT);
+                case Brick.RIGHT_IMPACT:
+                    ball.reverseX();
+                    return b.checkImpact(ball.left, Brick.Crack.LEFT);
             }
-
-            repaint();
-        });
-
+        }
+        return false;
     }
-
 
     /**
-     *
+     * @return
+     * changes ball's direction when it reaches the border of gameBoard
      */
-    private void initialize(){
-        this.setPreferredSize(new Dimension(DEF_WIDTH,DEF_HEIGHT));
-        this.setFocusable(true);
-        this.requestFocusInWindow();
-        this.addKeyListener(this);
-        this.addMouseListener(this);
-        this.addMouseMotionListener(this);
+    private boolean impactBorder(){
+        Point2D p = ball.getPosition();
+        return ((p.getX() < area.getX()) ||(p.getX() > (area.getX() + area.getWidth())));
     }
-
 
     /**
-     * @param g
+     * @return
+     * returns the number of remaining bricks
      */
-    public void paint(Graphics g){
-
-        Graphics2D g2d = (Graphics2D) g;
-
-        clear(g2d);
-
-        g2d.setColor(Color.BLUE);
-        g2d.drawString(message,250,225);
-
-        drawBall(wall.ball,g2d);
-
-        for(Brick b : wall.bricks)
-            if(!b.isBroken())
-                drawBrick(b,g2d);
-
-        drawPlayer(wall.player,g2d);
-
-        if(showPauseMenu)
-            drawMenu(g2d);
-
-        Toolkit.getDefaultToolkit().sync();
+    public int getBrickCount(){
+        return brickCount;
     }
 
-    private void clear(Graphics2D g2d){
-        Color tmp = g2d.getColor();
-        g2d.setColor(BG_COLOR);
-        g2d.fillRect(0,0,getWidth(),getHeight());
-        g2d.setColor(tmp);
+    /**
+     * @return
+     * return the number of remaining balls
+     */
+    public int getBallCount(){
+        return ballCount;
     }
 
-    private void drawBrick(Brick brick, Graphics2D g2d){
-        Color tmp = g2d.getColor();
-
-        g2d.setColor(brick.getInnerColor());
-        g2d.fill(brick.getBrick());
-
-        g2d.setColor(brick.getBorderColor());
-        g2d.draw(brick.getBrick());
-
-
-        g2d.setColor(tmp);
+    /**
+     * @return
+     * return true if ball is lost, false if it is not lost
+     */
+    public boolean isBallLost(){
+        return ballLost;
     }
 
-    private void drawBall(Ball ball, Graphics2D g2d){
-        Color tmp = g2d.getColor();
+    /**
+     * resets the ball amd player to their starting positions, and sets random ball speed
+     */
+    public void ballReset(){
+        player.moveToPoint(startPoint);
+        ball.moveToPoint(startPoint);
+        int speedX,speedY;
+        do{
+            speedX = rnd.nextInt(5) - 2;
+        }while(speedX == 0);
+        do{
+            speedY = -rnd.nextInt(3);
+        }while(speedY == 0);
 
-        Shape s = ball.getBallShape();
-
-        g2d.setColor(ball.getInnerColor());
-        g2d.fill(s);
-
-        g2d.setColor(ball.getBorderColor());
-        g2d.draw(s);
-
-        g2d.setColor(tmp);
+        setBallXSpeed(speedX);
+        setBallYSpeed(speedY);
+        ballLost = false;
     }
 
-    private void drawPlayer(Player p, Graphics2D g2d){
-        Color tmp = g2d.getColor();
-
-        Shape s = p.getPlayerShape();
-        g2d.setColor(Player.INNER_COLOR);
-        g2d.fill(s);
-
-        g2d.setColor(Player.BORDER_COLOR);
-        g2d.draw(s);
-
-        g2d.setColor(tmp);
+    /**
+     * repairs all bricks, then resets the brick count and ball count
+     */
+    public void brickWallReset(){
+        for(Brick b : bricks)
+            b.repairBrick();
+        brickCount = bricks.length;
+        ballCount = 3;
     }
 
-    private void drawMenu(Graphics2D g2d){
-        obscureGameBoard(g2d);
-        drawPauseMenu(g2d);
+    /**
+     * @return
+     * returns true if no more balls remaining, else returns false
+     */
+    public boolean ballEnd(){
+        return ballCount == 0;
     }
 
-    private void obscureGameBoard(Graphics2D g2d){
-
-        Composite tmp = g2d.getComposite();
-        Color tmpColor = g2d.getColor();
-
-        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.55f);
-        g2d.setComposite(ac);
-
-        g2d.setColor(Color.BLACK);
-        g2d.fillRect(0,0,DEF_WIDTH,DEF_HEIGHT);
-
-        g2d.setComposite(tmp);
-        g2d.setColor(tmpColor);
+    /**
+     * @return
+     * returns true if no more bricks remaining, else returns false
+     */
+    public boolean allBricksDestroyed(){
+        return brickCount == 0;
     }
 
-    private void drawPauseMenu(Graphics2D g2d){
-        Font tmpFont = g2d.getFont();
-        Color tmpColor = g2d.getColor();
-
-
-        g2d.setFont(menuFont);
-        g2d.setColor(MENU_COLOR);
-
-        if(strLen == 0){
-            FontRenderContext frc = g2d.getFontRenderContext();
-            strLen = menuFont.getStringBounds(PAUSE,frc).getBounds().width;
-        }
-
-        int x = (this.getWidth() - strLen) / 2;
-        int y = this.getHeight() / 10;
-
-        g2d.drawString(PAUSE,x,y);
-
-        x = this.getWidth() / 8;
-        y = this.getHeight() / 4;
-
-
-        if(continueButtonRect == null){
-            FontRenderContext frc = g2d.getFontRenderContext();
-            continueButtonRect = menuFont.getStringBounds(CONTINUE,frc).getBounds();
-            continueButtonRect.setLocation(x,y-continueButtonRect.height);
-        }
-
-        g2d.drawString(CONTINUE,x,y);
-
-        y *= 2;
-
-        if(restartButtonRect == null){
-            restartButtonRect = (Rectangle) continueButtonRect.clone();
-            restartButtonRect.setLocation(x,y-restartButtonRect.height);
-        }
-
-        g2d.drawString(RESTART,x,y);
-
-        y *= 3.0/2;
-
-        if(exitButtonRect == null){
-            exitButtonRect = (Rectangle) continueButtonRect.clone();
-            exitButtonRect.setLocation(x,y-exitButtonRect.height);
-        }
-
-        g2d.drawString(EXIT,x,y);
-
-
-
-        g2d.setFont(tmpFont);
-        g2d.setColor(tmpColor);
+    /**
+     * changes the bricks to the next level's bricks, then resets brickCount
+     */
+    public void nextLevel(){
+        bricks = levels[level++];
+        this.brickCount = bricks.length;
     }
 
-    @Override
-    public void keyTyped(KeyEvent keyEvent) {
+    /**
+     * @return
+     * returns true if there are still levels remaining, else returns false
+     */
+    public boolean hasLevel(){
+        return level < levels.length;
     }
 
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        switch(keyEvent.getKeyCode()){
-            case KeyEvent.VK_A:
-                wall.player.moveLeft();
+    /**
+     * @param s
+     * sets ball's x speed
+     */
+    public void setBallXSpeed(int s){
+        ball.speedX = s;
+    }
+
+    /**
+     * @param s
+     * sets ball's y speed
+     */
+    public void setBallYSpeed(int s){
+        ball.speedY = s;
+    }
+
+    /**
+     * resets the number of balls remaining to maximum
+     */
+    public void resetBallCount(){
+        ballCount = 3;
+    }
+
+    /**
+     * @param point
+     * @param size
+     * @param type
+     * @return
+     * returns the corresponding brick
+     */
+    private Brick makeBrick(Point point, Dimension size, int type){
+        Brick out;
+        switch(type){
+            case CLAY:
+                out = new ClayBrick(point,size);
                 break;
-            case KeyEvent.VK_D:
-                wall.player.movRight();
+            case STEEL:
+                out = new SteelBrick(point,size);
                 break;
-            case KeyEvent.VK_ESCAPE:
-                showPauseMenu = !showPauseMenu;
-                repaint();
-                gameTimer.stop();
+            case CEMENT:
+                out = new CementBrick(point, size);
                 break;
-            case KeyEvent.VK_SPACE:
-                if(!showPauseMenu)
-                    if(gameTimer.isRunning())
-                        gameTimer.stop();
-                    else
-                        gameTimer.start();
-                break;
-            case KeyEvent.VK_F1:
-                    debugConsole.setVisible(true);
             default:
-                wall.player.stop();
+                throw  new IllegalArgumentException(String.format("Unknown Type:%d\n",type));
         }
+        return  out;
     }
 
-    @Override
-    public void keyReleased(KeyEvent keyEvent) {
-        wall.player.stop();
+    /**
+     * gets high score from highsccorelist.txt
+     */
+    public void getHighscore(){
+        File score = new File("highscorelist.txt");
+
+        try{
+            Scanner scoreScan = new Scanner(score);
+            while (scoreScan.hasNextLine()){
+                higherscore = scoreScan.nextLine();
+                highscore = Integer.parseInt(higherscore);
+            }
+            scoreScan.close();
+        }catch(Exception e){ }
     }
-
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
-        Point p = mouseEvent.getPoint();
-        if(!showPauseMenu)
-            return;
-        if(continueButtonRect.contains(p)){
-            showPauseMenu = false;
-            repaint();
-        }
-        else if(restartButtonRect.contains(p)){
-            message = "Restarting Game...";
-            wall.ballReset();
-            wall.wallReset();
-            showPauseMenu = false;
-            repaint();
-        }
-        else if(exitButtonRect.contains(p)){
-            System.exit(0);
-        }
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent mouseEvent) {
-        Point p = mouseEvent.getPoint();
-        if(exitButtonRect != null && showPauseMenu) {
-            if (exitButtonRect.contains(p) || continueButtonRect.contains(p) || restartButtonRect.contains(p))
-                this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            else
-                this.setCursor(Cursor.getDefaultCursor());
-        }
-        else{
-            this.setCursor(Cursor.getDefaultCursor());
-        }
-    }
-
-    public void onLostFocus(){
-        gameTimer.stop();
-        message = "Focus Lost";
-        repaint();
-    }
-
 }

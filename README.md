@@ -14,4 +14,4 @@ resource link: https://www.javatpoint.com/Displaying-image-in-swing
 
 6. extension, attempted to add high score as a global variable using public static...failed. Will try something else.
 
-7. extension, added highscore and currentscore as private variables in Wall.java, also created a file named highscorelist to save the highscore. Changed the message after every brickbreaker round to show highscore and currentscore. Added a display for highscore and currentscore in owner, so it displays in both startmenu and in game.
+7. extension, added highscore and currentscore as private variables in GameBoard.java, also created a file named highscorelist to save the highscore. Changed the message after every brickbreaker round to show highscore and currentscore. Added a display for highscore and currentscore in owner, so it displays in both startmenu and in game.

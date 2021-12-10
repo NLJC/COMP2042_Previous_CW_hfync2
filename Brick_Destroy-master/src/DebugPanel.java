@@ -34,12 +34,12 @@ public class DebugPanel extends JPanel {
     private JSlider ballXSpeed;
     private JSlider ballYSpeed;
 
-    private Wall wall;
+    private GameBoard wall;
 
     /**
      * @param wall
      */
-    public DebugPanel(Wall wall){
+    public DebugPanel(GameBoard wall){
 
         this.wall = wall;
 

@@ -26,7 +26,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     private static final String DEF_TITLE = "Brick Destroy";
 
-    private GameBoard gameBoard;
+    private GamePanel gameBoard;
     private HomeMenu homeMenu;
     private InfoBoard infoBoard;
 
@@ -42,7 +42,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
         this.setLayout(new BorderLayout());
 
-        gameBoard = new GameBoard(this);
+        gameBoard = new GamePanel(this);
 
         homeMenu = new HomeMenu(this,new Dimension(360,260));
 
