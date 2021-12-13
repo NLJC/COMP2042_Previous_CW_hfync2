@@ -28,23 +28,24 @@ public class DebugConsole extends JDialog implements WindowListener{
 
     private JFrame owner;
     private DebugPanel debugPanel;
-    private GamePanel gameBoard;
-    private GameBoard wall;
+    private GamePanel gamePanel;
+    private GameBoard gameBoard;
 
 
     /**
      * @param owner
-     * @param wall
      * @param gameBoard
+     * @param gamePanel
+     * creates debugConsole
      */
-    public DebugConsole(JFrame owner, GameBoard wall, GamePanel gameBoard){
+    public DebugConsole(JFrame owner, GameBoard gameBoard, GamePanel gamePanel){
 
-        this.wall = wall;
-        this.owner = owner;
         this.gameBoard = gameBoard;
+        this.owner = owner;
+        this.gamePanel = gamePanel;
         initialize();
 
-        debugPanel = new DebugPanel(wall);
+        debugPanel = new DebugPanel(gameBoard);
         this.add(debugPanel,BorderLayout.CENTER);
 
 
@@ -52,7 +53,7 @@ public class DebugConsole extends JDialog implements WindowListener{
     }
 
     /**
-     *
+     * initializes debugConsole with specified settings
      */
     private void initialize(){
         this.setModal(true);
@@ -65,7 +66,7 @@ public class DebugConsole extends JDialog implements WindowListener{
 
 
     /**
-     *
+     * set the location of the debug console to the middle of the gamePanel
      */
     private void setLocation(){
         int x = ((owner.getWidth() - this.getWidth()) / 2) + owner.getX();
@@ -87,7 +88,7 @@ public class DebugConsole extends JDialog implements WindowListener{
      */
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        gameBoard.repaint();
+        gamePanel.repaint();
     }
 
     /**
@@ -116,11 +117,12 @@ public class DebugConsole extends JDialog implements WindowListener{
 
     /**
      * @param windowEvent
+     * places debugPanel in the middle of window, then gets number of balls and ball x and y speed
      */
     @Override
     public void windowActivated(WindowEvent windowEvent) {
         setLocation();
-        Ball b = wall.ball;
+        Ball b = gameBoard.ball;
         debugPanel.setValues(b.getSpeedX(),b.getSpeedY());
     }
 

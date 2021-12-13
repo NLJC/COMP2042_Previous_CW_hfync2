@@ -185,7 +185,7 @@ abstract public class Brick  {
          * @param to
          * @param direction
          * @return
-         * returns a random x and y position
+         * returns a random x and y position for the crack to be made in brick
          */
         private Point makeRandomPoint(Point from,Point to, int direction){
 
@@ -238,7 +238,6 @@ abstract public class Brick  {
         this.border = border;
         this.inner = inner;
         this.fullStrength = this.strength = strength;
-
     }
 
     /**

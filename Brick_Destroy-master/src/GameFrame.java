@@ -33,7 +33,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     private boolean gaming;
 
     /**
-     *
+     * creates all game JFrames except infoBoard
      */
     public GameFrame(){
         super();
@@ -46,7 +46,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
         homeMenu = new HomeMenu(this,new Dimension(360,260));
 
-        //infoBoard = new InfoBoard(this, new Dimension(360, 260));
+        infoBoard = new InfoBoard(this, new Dimension(360, 260));
 
         this.add(homeMenu,BorderLayout.CENTER);
 
@@ -56,7 +56,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
     /**
-     *
+     * initializes specified frame settings
      */
     public void initialize(){
         this.setTitle(DEF_TITLE);
@@ -68,32 +68,45 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
     /**
-     *
+     * starts gameBoard frame while disposing homeMenu frame
      */
     public void enableGameBoard(){
         this.dispose();
         this.remove(homeMenu);
+        this.remove(infoBoard);
         this.add(gameBoard,BorderLayout.CENTER);
         this.setUndecorated(false);
         initialize();
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
-
+        this.addKeyListener(gameBoard);
     }
 
     /**
-     *
+     * starts infoBoard frame while disposing homeMenu frame
      */
     public void enableInfoBoard(){
         this.dispose();
         this.remove(homeMenu);
-        InfoBoard infoBoard = new InfoBoard();
-        this.setUndecorated(false);
+        this.add(infoBoard,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
+
+    }
+
+    public void enableHomeMenu(){
+        this.dispose();
+        this.remove(infoBoard);
+        this.add(homeMenu,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
 
     }
 
     /**
-     *
+     * places frame in the middle of the screen
      */
     private void autoLocate(){
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -105,6 +118,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     /**
      * @param windowEvent
+     * sets gaming to true when window gains focus
      */
     @Override
     public void windowGainedFocus(WindowEvent windowEvent) {
@@ -121,6 +135,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     /**
      * @param windowEvent
+     * when the window loses focus and gaming is true, call onLostFocus method from gameBoard
      */
     @Override
     public void windowLostFocus(WindowEvent windowEvent) {

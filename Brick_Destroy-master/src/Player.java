@@ -72,6 +72,7 @@ public class Player {
 
     /**
      * moves player in the direction of moveAmount
+     * stops player when player is on border
      */
     public void movePlayer(){
         double x = playerlocation.getX() + moveAmount;
@@ -91,7 +92,7 @@ public class Player {
     /**
      * changes moveAmount to 5
      */
-    public void movRight(){
+    public void moveRight(){
         moveAmount = DEF_MOVE_AMOUNT;
     }
 

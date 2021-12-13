@@ -45,7 +45,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final int BORDER_SIZE = 5;
     private static final float[] DASHES = {12,6};
 
-    private Rectangle menuFace;
+    private Rectangle menuBoard;
     private Rectangle startButton;
     private Rectangle exitButton;
     private Rectangle infoButton;
@@ -69,20 +69,14 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     /**
      * @param owner
      * @param area
+     * creates rectangle that acts as the menuBoard
+     * creates rectangles that will act as buttons
      */
     public HomeMenu(GameFrame owner, Dimension area){
-
-        this.setFocusable(true);
-        this.requestFocusInWindow();
-
-        this.addMouseListener(this);
-        this.addMouseMotionListener(this);
-
+        initializeHomeMenu();
         this.owner = owner;
 
-
-
-        menuFace = new Rectangle(new Point(0,0),area);
+        menuBoard = new Rectangle(new Point(0,0),area);
         this.setPreferredSize(area);
 
         Dimension btnDim = new Dimension(area.width / 3, area.height / 12);
@@ -93,18 +87,13 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         borderStoke = new BasicStroke(BORDER_SIZE,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND,0,DASHES,0);
         borderStoke_noDashes = new BasicStroke(BORDER_SIZE,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
 
-        greetingsFont = new Font("Noto Mono",Font.PLAIN,25);
-        gameTitleFont = new Font("Noto Mono",Font.BOLD,40);
-        creditsFont = new Font("Monospaced",Font.PLAIN,10);
-        buttonFont = new Font("Monospaced",Font.PLAIN,startButton.height-2);
-
-
-
+        setFont();
     }
 
 
     /**
      * @param g
+     * paint menu over menuBoard
      */
     public void paint(Graphics g){
         drawMenu((Graphics2D)g);
@@ -113,10 +102,10 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param g2d
+     * draws menu text and buttons
      */
     public void drawMenu(Graphics2D g2d){
-
-        drawContainer(g2d);
+        paintMenu(g2d);
 
         /*
         all the following method calls need a relative
@@ -127,8 +116,8 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         Color prevColor = g2d.getColor();
         Font prevFont = g2d.getFont();
 
-        double x = menuFace.getX();
-        double y = menuFace.getY();
+        double x = menuBoard.getX();
+        double y = menuBoard.getY();
 
         g2d.translate(x,y);
 
@@ -144,25 +133,27 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param g2d
+     * paint colors in the menu, as well as the background
      */
-    private void drawContainer(Graphics2D g2d){
-        Color prev = g2d.getColor();
-
+    private void paintMenu(Graphics2D g2d){
         Image backgroundimage = Toolkit.getDefaultToolkit().getImage("Brick wall background.jpg");
         g2d.drawImage(backgroundimage, 0, 0, this);
+
+        Color prev = g2d.getColor();
+
         //reference: https://www.javatpoint.com/Displaying-image-in-swing
         g2d.setColor(BG_COLOR);
-        g2d.fill(menuFace);
+        g2d.fill(menuBoard);
 
         Stroke tmp = g2d.getStroke();
 
         g2d.setStroke(borderStoke_noDashes);
         g2d.setColor(DASH_BORDER_COLOR);
-        g2d.draw(menuFace);
+        g2d.draw(menuBoard);
 
         g2d.setStroke(borderStoke);
         g2d.setColor(BORDER_COLOR);
-        g2d.draw(menuFace);
+        g2d.draw(menuBoard);
 
         g2d.setStroke(tmp);
 
@@ -171,6 +162,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param g2d
+     * draws all text in their respective fonts and colors in menuBoard
      */
     private void drawText(Graphics2D g2d){
 
@@ -184,19 +176,19 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         int sX,sY;
 
-        sX = (int)(menuFace.getWidth() - greetingsRect.getWidth()) / 2;
-        sY = (int)(menuFace.getHeight() / 4);
+        sX = (int)(menuBoard.getWidth() - greetingsRect.getWidth()) / 2;
+        sY = (int)(menuBoard.getHeight() / 4);
 
         g2d.setFont(greetingsFont);
         g2d.drawString(GREETINGS,sX,sY);
 
-        sX = (int)(menuFace.getWidth() - gameTitleRect.getWidth()) / 2;
+        sX = (int)(menuBoard.getWidth() - gameTitleRect.getWidth()) / 2;
         sY += (int) gameTitleRect.getHeight() * 1.1;//add 10% of String height between the two strings
 
         g2d.setFont(gameTitleFont);
         g2d.drawString(GAME_TITLE,sX,sY);
 
-        sX = (int)(menuFace.getWidth() - creditsRect.getWidth()) / 2;
+        sX = (int)(menuBoard.getWidth() - creditsRect.getWidth()) / 2;
         sY += (int) creditsRect.getHeight() * 1.1;
 
         g2d.setFont(creditsFont);
@@ -207,9 +199,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param g2d
+     * draws all buttons in their respective shapes and positions in menuBoard
      */
     private void drawButton(Graphics2D g2d){
-
         FontRenderContext frc = g2d.getFontRenderContext();
 
         Rectangle2D txtRect = buttonFont.getStringBounds(START_TEXT,frc);
@@ -218,8 +210,8 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         g2d.setFont(buttonFont);
 
-        int x = (menuFace.width - startButton.width) / 2;
-        int y =(int) ((menuFace.height - startButton.height) * 0.8);
+        int x = (menuBoard.width - startButton.width) / 2;
+        int y =(int) ((menuBoard.height - startButton.height) * 0.8);
 
         startButton.setLocation(x,y);
 
@@ -228,9 +220,6 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         x += startButton.x;
         y += startButton.y + (startButton.height * 0.9);
-
-
-
 
         if(startClicked){
             Color tmp = g2d.getColor();
@@ -304,11 +293,13 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
             g2d.draw(infoButton);
             g2d.drawString(INFO_TEXT,x,y);
         }
-
     }
 
     /**
      * @param mouseEvent
+     * starts game if startButton clicked
+     * exits game if exitButton clicked
+     * opens infoBoard if infoButton clicked
      */
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
@@ -329,6 +320,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param mouseEvent
+     * changes the color of the buttons when pressed
      */
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
@@ -350,6 +342,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param mouseEvent
+     * changes the button color back to normal when mouse released
      */
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
@@ -394,6 +387,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     /**
      * @param mouseEvent
+     * changes the cursor to a hand when hovering over buttons
      */
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
@@ -402,6 +396,26 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         else
             this.setCursor(Cursor.getDefaultCursor());
+    }
 
+    /**
+     * initialized homeMenu with specified settings
+     */
+    public void initializeHomeMenu(){
+        this.setFocusable(true);
+        this.requestFocusInWindow();
+
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
+    }
+
+    /**
+     * sets fonts for greetings, title, credits and buttons
+     */
+    public void setFont(){
+        greetingsFont = new Font("Noto Mono",Font.PLAIN,25);
+        gameTitleFont = new Font("Noto Mono",Font.BOLD,40);
+        creditsFont = new Font("Monospaced",Font.PLAIN,10);
+        buttonFont = new Font("Monospaced",Font.PLAIN,startButton.height-2);
     }
 }

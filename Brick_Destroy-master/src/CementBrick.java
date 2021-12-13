@@ -4,8 +4,6 @@ import java.awt.geom.Point2D;
 
 
 public class CementBrick extends Brick {
-
-
     private static final String NAME = "Cement Brick";
     private static final Color DEF_INNER = new Color(147, 147, 147);
     private static final Color DEF_BORDER = new Color(217, 199, 175);
@@ -14,14 +12,13 @@ public class CementBrick extends Brick {
     private Crack crack;
     private Shape brickShape;
 
-
     /**
      * @param point
-     * @param size
+     * @param shape
      * create initial brick "Cement Brick" with same brick shape
      */
-    public CementBrick(Point point, Dimension size){
-        super(NAME,point,size,DEF_BORDER,DEF_INNER,CEMENT_STRENGTH);
+    public CementBrick(Point point, Dimension shape){
+        super(NAME,point,shape,DEF_BORDER,DEF_INNER,CEMENT_STRENGTH);
         crack = new Crack(DEF_CRACK_DEPTH,DEF_STEPS);
         brickShape = super.brickShape;
     }
@@ -33,9 +30,7 @@ public class CementBrick extends Brick {
      * returns brick shape and position
      */
     @Override
-    protected Shape makeBrickShape(Point pos, Dimension shape) {
-        return new Rectangle(pos,shape);
-    }
+    protected Shape makeBrickShape(Point pos, Dimension shape) {return new Rectangle(pos,shape);}
 
     /**
      * @param point
