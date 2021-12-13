@@ -31,31 +31,33 @@ public class DebugPanel extends JPanel {
     private JButton skipLevel;
     private JButton resetBalls;
 
-    private JSlider ballXSpeed;
-    private JSlider ballYSpeed;
+    private JSlider ballXVelocity;
+    private JSlider ballYVelocity;
 
-    private GameBoard wall;
+    private GameBoard gameBoard;
+    private Ball ball;
 
     /**
-     * @param wall
+     * @param gameBoard
      * creates debugPanel
      */
-    public DebugPanel(GameBoard wall){
-        this.wall = wall;
+    public DebugPanel(GameBoard gameBoard, Ball ball){
+        this.gameBoard = gameBoard;
+        this.ball = ball;
 
         initialize();
 
-        skipLevel = makeButton("Skip Level",e -> wall.nextLevel());
-        resetBalls = makeButton("Reset Balls",e -> wall.resetBallCount());
+        skipLevel = makeButton("Skip Level",e -> gameBoard.nextLevel());
+        resetBalls = makeButton("Reset Balls",e -> gameBoard.resetBallCount());
 
-        ballXSpeed = makeSlider(-4,4,e -> wall.setBallXSpeed(ballXSpeed.getValue()));
-        ballYSpeed = makeSlider(-4,4,e -> wall.setBallYSpeed(ballYSpeed.getValue()));
+        ballXVelocity = makeSlider(-4,4,e -> ball.setBallXVelocity(ballXVelocity.getValue()));
+        ballYVelocity = makeSlider(-4,4,e -> ball.setBallYVelocity(ballYVelocity.getValue()));
 
         this.add(skipLevel);
         this.add(resetBalls);
 
-        this.add(ballXSpeed);
-        this.add(ballYSpeed);
+        this.add(ballXVelocity);
+        this.add(ballYVelocity);
     }
 
     /**
@@ -100,7 +102,7 @@ public class DebugPanel extends JPanel {
      * used to set ball x and y values using sliders
      */
     public void setValues(int x,int y){
-        ballXSpeed.setValue(x);
-        ballYSpeed.setValue(y);
+        ballXVelocity.setValue(x);
+        ballYVelocity.setValue(y);
     }
 }

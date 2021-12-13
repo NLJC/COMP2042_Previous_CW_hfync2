@@ -20,8 +20,8 @@ public abstract class Ball {
     private Color borderColor;
     private Color innerColor;
 
-    public int speedX;
-    public int speedY;
+    public int velocityX;
+    public int velocityY;
 
     /**
      * @param ballCoordinates
@@ -54,11 +54,11 @@ public abstract class Ball {
     protected abstract Shape makeBall(Point2D ballCoordinates,int ballXLength,int ballYLength);
 
     /**
-     *move the ball in the direction of its speed
+     *move the ball in the direction of its Velocity
      */
     public void ballMovement(){
         RectangularShape tmp = (RectangularShape) ballShape;
-        ballCoordinates.setLocation((ballCoordinates.getX() + speedX),(ballCoordinates.getY() + speedY));
+        ballCoordinates.setLocation((ballCoordinates.getX() + velocityX),(ballCoordinates.getY() + velocityY));
         double w = tmp.getWidth();
         double h = tmp.getHeight();
 
@@ -93,33 +93,45 @@ public abstract class Ball {
     }
 
     /**
-     * @return
-     * get x speed of ball
+     * @param s
+     * sets ball's x Velocity
      */
-    public int getSpeedX(){
-        return speedX;
+    public void setBallXVelocity(int s){velocityX = s;}
+
+    /**
+     * @param s
+     * sets ball's y Velocity
+     */
+    public void setBallYVelocity(int s){velocityY = s;}
+
+    /**
+     * @return
+     * get x velocity of ball
+     */
+    public int getVelocityX(){
+        return velocityX;
     }
 
     /**
      * @return
-     * get y speed of ball
+     * get y Velocity of ball
      */
-    public int getSpeedY(){
-        return speedY;
+    public int getVelocityY(){
+        return velocityY;
     }
 
     /**
-     * reverse the direction of x speed
+     * reverse the direction of x Velocity
      */
     public void reverseX(){
-        speedX *= -1;
+        velocityX *= -1;
     }
 
     /**
-     * reverse the direcction of y speed
+     * reverse the direcction of y Velocity
      */
     public void reverseY(){
-        speedY *= -1;
+        velocityY *= -1;
     }
 
     /**

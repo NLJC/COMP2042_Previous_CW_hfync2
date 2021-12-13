@@ -80,7 +80,7 @@ public class GamePanel extends JComponent implements KeyListener,MouseListener,M
                 gameBoard = new GameBoard(new Rectangle(0,0,DEF_WIDTH,DEF_HEIGHT),30,3,6/2,new Point(300,430));
                 gameBoard.getHighscore();
 
-                debugConsole = new DebugConsole(owner,gameBoard,this);
+                debugConsole = new DebugConsole(owner,gameBoard,this, gameBoard.ball);
                 //initialize the first level
                 gameBoard.nextLevel();
 
