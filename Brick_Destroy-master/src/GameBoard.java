@@ -77,10 +77,10 @@ public class GameBoard {
         int velocityX=0;
         int velocityY=0;
         do{
-            velocityX = rnd.nextInt(5) - 2;
+            velocityX = rnd.nextInt(6) - 3;
         }while(velocityX == 0);
         do{
-            velocityY = -rnd.nextInt(3);
+            velocityY = -rnd.nextInt(4);
         }while(velocityY == 0);
 
         ball.setBallXVelocity(velocityX);
@@ -213,7 +213,7 @@ public class GameBoard {
      */
     private Brick[][] makeLevels(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio){
         Brick[][] tmp = new Brick[LEVELS_COUNT][];
-        tmp[14] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY);
+        tmp[0] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY);
         tmp[1] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,STEEL);
         tmp[2] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,STEEL);
         tmp[3] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,CEMENT);
@@ -227,7 +227,7 @@ public class GameBoard {
         tmp[11] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,HELL);
         tmp[12] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CEMENT,HELL);
         tmp[13] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,TOUGH,HELL);
-        tmp[0] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,HELL,HELL);
+        tmp[14] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,HELL,HELL);
         return tmp;
     }
 
