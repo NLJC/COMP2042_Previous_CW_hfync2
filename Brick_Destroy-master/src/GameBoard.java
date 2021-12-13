@@ -25,7 +25,7 @@ import java.util.Scanner;
 
 public class GameBoard {
 
-    private static final int LEVELS_COUNT = 6;
+    private static final int LEVELS_COUNT = 15;
 
     public int currentscore=0;
     public int highscore;
@@ -34,7 +34,8 @@ public class GameBoard {
     private static final int CLAY = 1;
     private static final int STEEL = 2;
     private static final int CEMENT = 3;
-    //private static final int TOUGH = 4;
+    private static final int TOUGH = 4;
+    private static final int HELL = 5;
 
     private Random rnd;
     private Rectangle area;
@@ -57,7 +58,7 @@ public class GameBoard {
      * @param lineCount
      * @param brickDimensionRatio
      * @param ballPos
-     * create ball and player in their initial positions, and set random ball speed
+     * create ball and player in their initial positions, and set random ball velocity
      */
     public GameBoard(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
         this.startPoint = new Point(ballPos);
@@ -72,18 +73,18 @@ public class GameBoard {
         //create ball in starting position
         makeBall(ballPos);
 
-        //set ball speed to random speed when ball has no speed
-        int speedX=0;
-        int speedY=0;
+        //set ball velocity to random velocity when ball has no velocity
+        int velocityX=0;
+        int velocityY=0;
         do{
-            speedX = rnd.nextInt(5) - 2;
-        }while(speedX == 0);
+            velocityX = rnd.nextInt(5) - 2;
+        }while(velocityX == 0);
         do{
-            speedY = -rnd.nextInt(3);
-        }while(speedY == 0);
+            velocityY = -rnd.nextInt(3);
+        }while(velocityY == 0);
 
-        setBallXSpeed(speedX);
-        setBallYSpeed(speedY);
+        ball.setBallXVelocity(velocityX);
+        ball.setBallYVelocity(velocityY);
 
         //clone ball position and put player there
         player = new Player((Point) ballPos.clone(),150,10, drawArea);
@@ -212,13 +213,21 @@ public class GameBoard {
      */
     private Brick[][] makeLevels(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio){
         Brick[][] tmp = new Brick[LEVELS_COUNT][];
-        tmp[0] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY);
+        tmp[14] = makeSingleTypeLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY);
         tmp[1] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,STEEL);
         tmp[2] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,STEEL);
         tmp[3] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,CEMENT);
         tmp[4] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CEMENT,CEMENT);
         tmp[5] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,CEMENT);
-
+        tmp[6] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,TOUGH);
+        tmp[7] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,TOUGH);
+        tmp[8] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CEMENT,TOUGH);
+        tmp[9] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,TOUGH,TOUGH);
+        tmp[10] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CLAY,HELL);
+        tmp[11] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,STEEL,HELL);
+        tmp[12] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,CEMENT,HELL);
+        tmp[13] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,TOUGH,HELL);
+        tmp[0] = makeChessboardLevel(drawArea,brickCount,lineCount,brickDimensionRatio,HELL,HELL);
         return tmp;
     }
 
@@ -231,8 +240,8 @@ public class GameBoard {
     }
 
     /**
-     * if paddle and ball are about to collide, reverse the y speed of ball
-     * if ball is about to collide with a brick, reverse either its x or y speed depending on where it collides
+     * if paddle and ball are about to collide, reverse the y velocity of ball
+     * if ball is about to collide with a brick, reverse either its x or y velocity depending on where it collides
      */
     public void findImpacts(){
         if(player.checkImpact(ball)){
@@ -329,21 +338,21 @@ public class GameBoard {
     }
 
     /**
-     * resets the ball amd player to their starting positions, and sets random ball speed
+     * resets the ball amd player to their starting positions, and sets random ball velocity
      */
     public void ballReset(){
         player.moveToPoint(startPoint);
         ball.moveToPoint(startPoint);
-        int speedX,speedY;
+        int velocityX,velocityY;
         do{
-            speedX = rnd.nextInt(5) - 2;
-        }while(speedX == 0);
+            velocityX = rnd.nextInt(5) - 2;
+        }while(velocityX == 0);
         do{
-            speedY = -rnd.nextInt(3);
-        }while(speedY == 0);
+            velocityY = -rnd.nextInt(3);
+        }while(velocityY == 0);
 
-        setBallXSpeed(speedX);
-        setBallYSpeed(speedY);
+        ball.setBallXVelocity(velocityX);
+        ball.setBallYVelocity(velocityY);
         ballLost = false;
     }
 
@@ -378,7 +387,7 @@ public class GameBoard {
      */
     public void nextLevel(){
         bricks = levels[level++];
-        this.brickCount = 1;
+        this.brickCount = bricks.length;
     }
 
     /**
@@ -387,22 +396,6 @@ public class GameBoard {
      */
     public boolean hasLevel(){
         return level < levels.length;
-    }
-
-    /**
-     * @param s
-     * sets ball's x speed
-     */
-    public void setBallXSpeed(int s){
-        ball.speedX = s;
-    }
-
-    /**
-     * @param s
-     * sets ball's y speed
-     */
-    public void setBallYSpeed(int s){
-        ball.speedY = s;
     }
 
     /**
@@ -431,9 +424,12 @@ public class GameBoard {
             case CEMENT:
                 out = new CementBrick(point, size);
                 break;
-            //case TOUGH:
-                //out = new ToughBrick(point, size);
-                //break;
+            case TOUGH:
+                out = new ToughBrick(point, size);
+                break;
+            case HELL:
+                out = new HellBrick(point, size);
+                break;
             default:
                 throw  new IllegalArgumentException(String.format("Unknown Type:%d\n",type));
         }

@@ -11,9 +11,10 @@ import java.awt.Graphics;
 
 public class InfoBoard extends JComponent implements MouseListener, MouseMotionListener {
 
-    private static final String GREETINGS = "Welcome to:";
     private static final String GAME_TITLE = "Brick Destroy";
-    private static final String CREDITS = "Version 0.1";
+    private static final String RULE1 = "Space to pause/continue game, esc to open menu";
+    private static final String RULE2 = "A and D to move player paddle";
+    private static final String RULE3 = "F1 to open Debug Console";
     private static final String MENU_TEXT = "Menu";
     private static final String START_TEXT = "Start";
 
@@ -34,9 +35,8 @@ public class InfoBoard extends JComponent implements MouseListener, MouseMotionL
     private BasicStroke borderStoke;
     private BasicStroke borderStoke_noDashes;
 
-    private Font greetingsFont;
+    private Font rulesFont;
     private Font gameTitleFont;
-    private Font creditsFont;
     private Font buttonFont;
 
     private GameFrame owner;
@@ -66,9 +66,8 @@ public class InfoBoard extends JComponent implements MouseListener, MouseMotionL
         borderStoke = new BasicStroke(BORDER_SIZE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, DASHES, 0);
         borderStoke_noDashes = new BasicStroke(BORDER_SIZE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-        greetingsFont = new Font("Noto Mono", Font.PLAIN, 25);
-        gameTitleFont = new Font("Noto Mono", Font.BOLD, 40);
-        creditsFont = new Font("Monospaced", Font.PLAIN, 10);
+        rulesFont = new Font("Noto Mono", Font.PLAIN, 15);
+        gameTitleFont = new Font("Noto Mono", Font.BOLD, 30);
         buttonFont = new Font("Monospaced", Font.PLAIN, startButton.height - 2);
 
 
@@ -149,31 +148,36 @@ public class InfoBoard extends JComponent implements MouseListener, MouseMotionL
 
         FontRenderContext frc = g2d.getFontRenderContext();
 
-        Rectangle2D greetingsRect = greetingsFont.getStringBounds(GREETINGS, frc);
         Rectangle2D gameTitleRect = gameTitleFont.getStringBounds(GAME_TITLE, frc);
-        Rectangle2D creditsRect = creditsFont.getStringBounds(CREDITS, frc);
+        Rectangle2D rule1Rect = rulesFont.getStringBounds(RULE1, frc);
+        Rectangle2D rule2Rect = rulesFont.getStringBounds(RULE2, frc);
+        Rectangle2D rule3Rect = rulesFont.getStringBounds(RULE3, frc);
 
         int sX, sY;
 
-        sX = (int) (menuFace.getWidth() - greetingsRect.getWidth()) / 2;
-        sY = (int) (menuFace.getHeight() / 4);
-
-        g2d.setFont(greetingsFont);
-        g2d.drawString(GREETINGS, sX, sY);
-
         sX = (int) (menuFace.getWidth() - gameTitleRect.getWidth()) / 2;
-        sY += (int) gameTitleRect.getHeight() * 1.1;//add 10% of String height between the two strings
+        sY = (int) (menuFace.getHeight() / 4);
 
         g2d.setFont(gameTitleFont);
         g2d.drawString(GAME_TITLE, sX, sY);
 
-        sX = (int) (menuFace.getWidth() - creditsRect.getWidth()) / 2;
-        sY += (int) creditsRect.getHeight() * 1.1;
+        sX = (int) (menuFace.getWidth() - rule1Rect.getWidth()) / 2;
+        sY += (int) rule1Rect.getHeight() * 1.1;//add 10% of String height between the two strings
 
-        g2d.setFont(creditsFont);
-        g2d.drawString(CREDITS, sX, sY);
+        g2d.setFont(rulesFont);
+        g2d.drawString(RULE1, sX, sY);
 
+        sX = (int) (menuFace.getWidth() - rule2Rect.getWidth()) / 2;
+        sY += (int) rule2Rect.getHeight() * 1.1;
 
+        g2d.setFont(rulesFont);
+        g2d.drawString(RULE2, sX, sY);
+
+        sX = (int) (menuFace.getWidth() - rule3Rect.getWidth()) / 2;
+        sY += (int) rule3Rect.getHeight() * 1.1;
+
+        g2d.setFont(rulesFont);
+        g2d.drawString(RULE3, sX, sY);
     }
 
     /**
