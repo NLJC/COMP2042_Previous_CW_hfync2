@@ -6,7 +6,7 @@ import java.util.Random;
 
 /**
  * Created by filippo on 04/09/16.
- *
+ * Refactored by Nicholas Chandra
  */
 abstract public class Brick  {
 

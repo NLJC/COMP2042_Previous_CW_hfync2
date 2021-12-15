@@ -4,7 +4,7 @@ import java.awt.Point;
 
 /**
  * Created by filippo on 04/09/16.
- *
+ * Refactored by Nicholas Chandra
  */
 public class ClayBrick extends Brick {
 
